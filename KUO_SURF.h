@@ -24,11 +24,11 @@ namespace cv {
 
 
 static const int os[6][5] = { {0, 1, 2, 3},
-							  {1, 3, 4, 5},
-							  {3, 5, 6, 7},
-							  {5, 7, 8, 9},
-							  {7, 9, 10, 11},
-							  {9, 11, 12, 13} };
+			      {1, 3, 4, 5},
+			      {3, 5, 6, 7},
+			      {5, 7, 8, 9},
+			      {7, 9, 10, 11},
+			      {9, 11, 12, 13} };
 
 static const int L[12] = {3,5,7,9,13,17,25,33,49,65,97,129};
 static const int Lstep[12] = {0,0,0,0,1,1,2,2,3,3,4,4};
@@ -40,12 +40,12 @@ class InterestPoint {
 
 public:
 
-	float x;       //¿³½ìÂI¦C®y¼Ğ
-	float y;       //¿³½ìÂI¦æ®y¼Ğ
-	float scale;     //¿³½ìÂI©Ò¦bªº¤Ø«×
-	int lapacian;  //¿³½ìÂI
-	float orientation; //¿³½ìÂIªº¥D­n¤è¦V
-	float descriptor[64]; //¿³½ìÂIªº´y­z¤l
+	float x;       //èˆˆè¶£é»åˆ—åº§æ¨™
+	float y;       //èˆˆè¶£é»è¡Œåº§æ¨™
+	float scale;     //èˆˆè¶£é»æ‰€åœ¨çš„å°ºåº¦
+	int lapacian;  //èˆˆè¶£é»
+	float orientation; //èˆˆè¶£é»çš„ä¸»è¦æ–¹å‘
+	float descriptor[64]; //èˆˆè¶£é»çš„æè¿°å­
 };
 
 class FilterLayer {
@@ -87,8 +87,10 @@ inline int BOXDXX(Mat *image, int centerx, int centery, int h, int w, int s) {
 	int dy1 = std::min(col - 1, centery + (w - 1) / 2);
 	int ay2 = std::max(0, centery - (s - 1) / 2 - 1);
 	int dy2 = std::min(col- 1, centery + (s - 1) / 2);
-	int white = (data[dx1 * step0 + dy1 * step1] + data[ax1 * step0 + ay1 * step1] - data[ax1 * step0 + dy1 * step1] - data[dx1 * step0 + ay1 * step1]);
-	int black = (data[dx1 * step0 + dy2 * step1] + data[ax1 * step0 + ay2 * step1] - data[ax1 * step0 + dy2 * step1] - data[dx1 * step0 + ay2 * step1]);
+	int white = (data[dx1 * step0 + dy1 * step1] + data[ax1 * step0 + ay1 * step1] 
+		     - data[ax1 * step0 + dy1 * step1] - data[dx1 * step0 + ay1 * step1]);
+	int black = (data[dx1 * step0 + dy2 * step1] + data[ax1 * step0 + ay2 * step1] 
+		     - data[ax1 * step0 + dy2 * step1] - data[dx1 * step0 + ay2 * step1]);
 	assert(white>=0);
 	assert(black>=0);
 	return (white-3*black);
@@ -106,8 +108,10 @@ inline int BOXDYY(Mat *image, int centerx, int centery, int h, int w, int s) {
 	int dy1 = std::min(col - 1, centery + (w - 1) / 2);
 	int ax2 = std::max(0, centerx - (s - 1) / 2 - 1);
 	int dx2 = std::min(row - 1, centerx + (s - 1) / 2);
-	int white = (data[dx1 * step0 + dy1 * step1] + data[ax1 * step0 + ay1 * step1] - data[ax1 * step0 + dy1 * step1] - data[dx1 * step0 + ay1 * step1]);
-	int black = (data[dx2 * step0 + dy1 * step1] + data[ax2 * step0 + ay1 * step1] - data[ax2 * step0 + dy1 * step1] - data[dx2 * step0 + ay1 * step1]);
+	int white = (data[dx1 * step0 + dy1 * step1] + data[ax1 * step0 + ay1 * step1] 
+		     - data[ax1 * step0 + dy1 * step1] - data[dx1 * step0 + ay1 * step1]);
+	int black = (data[dx2 * step0 + dy1 * step1] + data[ax2 * step0 + ay1 * step1] 
+		     - data[ax2 * step0 + dy1 * step1] - data[dx2 * step0 + ay1 * step1]);
 	assert(white>=0);
 	assert(black>=0);
 	return (white-3*black);
@@ -126,10 +130,14 @@ inline int BOXDXY(Mat *image, int centerx, int centery, int h) {
 	int dx2 = std::min(row - 1, centerx + h);
 	int dy2 = std::min(col - 1, centery + h);
 
-	int white1 = (data[dx1 * step0 + dy1 * step1] + data[ax1 * step0 + ay1 * step1] - data[ax1 * step0 + dy1 * step1] - data[dx1 * step0 + ay1 * step1]);
-	int white2 = (data[dx2 * step0 + dy2 * step1] + data[centerx * step0 + centery * step1] - data[centerx * step0 + dy2 * step1] - data[dx2 * step0 + centery * step1]);
-	int black1 = (data[dx2 * step0 + dy1 * step1] + data[centerx * step0 + ay1 * step1] - data[centerx * step0 + dy1 * step1] - data[dx2 * step0 + ay1 * step1]);
-	int black2 = (data[dx1 * step0 + dy2 * step1] + data[ax1 * step0 + centery * step1] - data[ax1 * step0 + dy2 * step1] - data[dx1 * step0 + centery * step1]);
+	int white1 = (data[dx1 * step0 + dy1 * step1] + data[ax1 * step0 + ay1 * step1] 
+		      - data[ax1 * step0 + dy1 * step1] - data[dx1 * step0 + ay1 * step1]);
+	int white2 = (data[dx2 * step0 + dy2 * step1] + data[centerx * step0 + centery * step1] 
+		      - data[centerx * step0 + dy2 * step1] - data[dx2 * step0 + centery * step1]);
+	int black1 = (data[dx2 * step0 + dy1 * step1] + data[centerx * step0 + ay1 * step1] 
+		      - data[centerx * step0 + dy1 * step1] - data[dx2 * step0 + ay1 * step1]);
+	int black2 = (data[dx1 * step0 + dy2 * step1] + data[ax1 * step0 + centery * step1] 
+		      - data[ax1 * step0 + dy2 * step1] - data[dx1 * step0 + centery * step1]);
 	assert(white1>=0);
 	assert(white2>=0);
 	assert(black1>=0);
@@ -148,8 +156,10 @@ inline int BOXHAARX(Mat *image, int centerx, int centery, int h) {
 	int ay = max(0, centery - 2 * h);
 	int dx = min(row-1, centerx + 2 * h);
 	int dy = min(col-1, centery + 2 * h);
-	int black = data[dx * step0 + centery * step1] + data[ax*step0 + ay * step1] - data[ax*step0 + centery * step1] - data[dx*step0 + ay * step1];
-	int white = data[dx * step0 + dy * step1] + data[ax*step0 + centery * step1] - data[ax*step0 + dy * step1] - data[dx*step0 + centery * step1];
+	int black = data[dx * step0 + centery * step1] + data[ax*step0 + ay * step1] 
+		- data[ax*step0 + centery * step1] - data[dx*step0 + ay * step1];
+	int white = data[dx * step0 + dy * step1] + data[ax*step0 + centery * step1] 
+		- data[ax*step0 + dy * step1] - data[dx*step0 + centery * step1];
 	assert(black >= 0);
 	assert(white >= 0);
 	return (white - black);
@@ -165,8 +175,10 @@ inline int BOXHAARY(Mat *image, int centerx, int centery, int h) {
 	int ay = max(0, centery - 2 * h);
 	int dx = min(row-1, centerx + 2 * h);
 	int dy = min(col-1, centery + 2 * h);
-	int black = data[centerx * step0 + dy * step1] + data[ax*step0 + ay * step1] - data[ax*step0 + dy * step1] - data[centerx*step0 + ay * step1];
-	int white = data[dx*step0 + dy * step1] + data[centerx*step0 + ay * step1] - data[centerx*step0 + dy * step1] - data[dx*step0 + ay * step1];
+	int black = data[centerx * step0 + dy * step1] + data[ax*step0 + ay * step1] 
+		- data[ax*step0 + dy * step1] - data[centerx*step0 + ay * step1];
+	int white = data[dx*step0 + dy * step1] + data[centerx*step0 + ay * step1] 
+		- data[centerx*step0 + dy * step1] - data[dx*step0 + ay * step1];
 	assert(black >= 0);
 	assert(white >= 0);
 	return (white - black);
