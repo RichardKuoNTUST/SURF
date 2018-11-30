@@ -41,7 +41,8 @@ int main() {
 	SURF(gray1, IPTs1, OCTAVES, STEP, THRESHOLD);
 	for (int i = 0; i < IPTs1.size(); i++) {
 		circle(sc1, Point(IPTs1.at(i).x, IPTs1.at(i).y), IPTs1.at(i).scale, Scalar(255, 0, 0), 2);
-		line(sc1, Point(IPTs1.at(i).x, IPTs1.at(i).y), Point(IPTs1.at(i).x + IPTs1.at(i).scale*cos(IPTs1.at(i).orientation), IPTs1.at(i).y + IPTs1.at(i).scale*sin(IPTs1.at(i).orientation)), Scalar(0, 255, 0), 1);
+		line(sc1, Point(IPTs1.at(i).x, IPTs1.at(i).y), Point(IPTs1.at(i).x + IPTs1.at(i).scale*cos(IPTs1.at(i).orientation), 
+			IPTs1.at(i).y + IPTs1.at(i).scale*sin(IPTs1.at(i).orientation)), Scalar(0, 255, 0), 1);
 	}
 	namedWindow("Original Picture1", WINDOW_AUTOSIZE);
 	imshow("Original Picture1", sc1);
