@@ -3,7 +3,7 @@
 #include <algorithm>
 
 void SURF(Mat image, std::vector<InterestPoint> & IPTs, uint8_t octaves, unsigned int step, float threshold) {
-	Mat IM;  //¿x¶søn§¿πœ
+	Mat IM;  //√Äx¬¶s¬øn¬§√Ä¬π√è
 	IM.create(image.rows, image.cols, CV_32S);
 	integral(image, IM, CV_32S);
 	std::vector<FilterLayer *> LAYER;
@@ -23,13 +23,14 @@ void SURF(Mat image, std::vector<InterestPoint> & IPTs, uint8_t octaves, unsigne
 					if (isExtremum(a,b,LAYER[os[i][j]], LAYER[os[i][j+1]], LAYER[os[i][j+2]],threshold)) {
 						interpolateStep(a, b, LAYER[os[i][j]], LAYER[os[i][j + 1]], LAYER[os[i][j + 2]], X);
 						if ((fabs(X[0]) < 0.5) && (fabs(X[1]) < 0.5) && (fabs(X[2]) < 0.5)) {
-							InterestPoint ipt;
-							ipt.x = float((b + X[0]) * LAYER[os[i][j + 2]]->step);
-							ipt.y = float((a + X[1]) * LAYER[os[i][j + 2]]->step);
-							ipt.scale = float(3*LAYER[os[i][j + 1]]->filter + X[2]*(LAYER[os[i][j+1]]->filter-LAYER[os[i][j]]->filter))*3*0.1333f;
-							ipt.lapacian = LAYER[os[i][j + 1]]->laplacian[a*LAYER[os[i][j+1]]->width+b];
-							ipt.orientation = ORORIENTAION(ipt.x, ipt.y, ipt.scale, &IM);
-							IPTs.push_back(ipt);
+						    InterestPoint ipt;
+					            ipt.x = float((b + X[0]) * LAYER[os[i][j + 2]]->step);
+					            ipt.y = float((a + X[1]) * LAYER[os[i][j + 2]]->step);
+						    ipt.scale = float(3*LAYER[os[i][j + 1]]->filter 
+								+ X[2]*(LAYER[os[i][j+1]]->filter-LAYER[os[i][j]]->filter))*3*0.1333f;
+						    ipt.lapacian = LAYER[os[i][j + 1]]->laplacian[a*LAYER[os[i][j+1]]->width+b];
+						    ipt.orientation = ORORIENTAION(ipt.x, ipt.y, ipt.scale, &IM);
+						    IPTs.push_back(ipt);
 						}
 					}
 				}
